@@ -20,10 +20,10 @@ protected :
     double crd[3];
 };
 
-vecteur3& operator+(vecteur3 const& A, vecteur3 const& B);
-vecteur3& operator-(vecteur3 const& A, vecteur3 const& B);
-vecteur3& operator*(vecteur3 const& A, double const& B);
-vecteur3& operator*(double const& A, vecteur3 const& B);
+vecteur3 operator+(vecteur3 const& A, vecteur3 const& B);
+vecteur3 operator-(vecteur3 const& A, vecteur3 const& B);
+vecteur3 operator*(vecteur3 const& A, double const& B);
+vecteur3 operator*(double const& A, vecteur3 const& B);
 double norme(vecteur3 const& A);
 
 #endif // VECTEUR3_H

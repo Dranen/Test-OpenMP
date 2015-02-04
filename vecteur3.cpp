@@ -1,4 +1,5 @@
 #include "vecteur3.h"
+#include <cmath>
 
 vecteur3::vecteur3()
 {
@@ -63,28 +64,28 @@ vecteur3& vecteur3::operator=(vecteur3 const& A)
     return *this;
 }
 
-vecteur3& operator+(vecteur3 const& A, vecteur3 const& B)
+vecteur3 operator+(vecteur3 const& A, vecteur3 const& B)
 {
     vecteur3 C(A);
     C+=B;
     return C;
 }
 
-vecteur3& operator-(vecteur3 const& A, vecteur3 const& B)
+vecteur3 operator-(vecteur3 const& A, vecteur3 const& B)
 {
     vecteur3 C(A);
     C-=B;
     return C;
 }
 
-vecteur3& operator*(vecteur3 const& A, double const& B)
+vecteur3 operator*(vecteur3 const& A, double const& B)
 {
     vecteur3 C(A);
     C*=B;
     return C;
 }
 
-vecteur3& operator*(double const& B, vecteur3 const& A)
+vecteur3 operator*(double const& B, vecteur3 const& A)
 {
     vecteur3 C(A);
     C*=B;
@@ -93,5 +94,5 @@ vecteur3& operator*(double const& B, vecteur3 const& A)
 
 double norme(vecteur3 const& A)
 {
-    return sqrt(A[0]*A[0]+A[1]*A[1]+A[2]*A[2]);
+    return std::sqrt(A[0]*A[0]+A[1]*A[1]+A[2]*A[2]);
 }
