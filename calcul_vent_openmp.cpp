@@ -1,9 +1,10 @@
-#include "calcul_vent_seq.h"
+#include "calcul_vent_openmp.h"
 #include <iostream>
+#include <omp.h>
 #include <chrono>
 #include <iomanip>
 
-Calcul_vent_seq::Calcul_vent_seq(double v_inf, double erreur, double epsilon, double lambda, double taille[3], bool(*q_fixe)(vecteur3 crd))
+Calcul_vent_OpenMP::Calcul_vent_OpenMP(double v_inf, double erreur, double epsilon, double lambda, double taille[3], bool(*q_fixe)(vecteur3 crd))
 {
     this->epsilon = epsilon;
     this->lambda = lambda;
@@ -81,55 +82,80 @@ Calcul_vent_seq::Calcul_vent_seq(double v_inf, double erreur, double epsilon, do
 
 }
 
-void Calcul_vent_seq::calcul_vent()
+void Calcul_vent_OpenMP::calcul_vent()
 {
     bool fin = true;
     std::chrono::time_point<std::chrono::high_resolution_clock> start, end;
     vecteur3 correction;
+    int threadid=0;
 
-    //double ecart_maximal;
+    std::cout << "Debut calul vent parallèle avec OpenMP" << std::endl;
+    #pragma omp parallel private(threadid)
+    {
+        #pragma omp master                              // only the master thread will execute this code
+        {
+            // computation of the total number of threads
+            std::cout<<omp_get_num_threads()<<" thread(s) available for computation"<<std::endl;
 
-    std::cout << "Debut calul vent sequentiel" << std::endl;
+        }
+
+        threadid = omp_get_thread_num();
+        #pragma omp critical                            // in order to "protect" the common output
+        {
+            std::cerr<<"Thread "<<threadid<<" is ready for computation"<<std::endl;
+        }
+
+        #pragma omp barrier                             // barrier to display nthreads before threadid
+    }
     start = std::chrono::high_resolution_clock::now();
     do
     {
-        //ecart_maximal = 0;
         fin = true;
+
+        #pragma omp parallel private(correction)
+        {
+            for(unsigned long long int i = 1; i < this->taille[0]; i++)
+            {
+                for(unsigned long long int j = 1; j < this->taille[1]; j++)
+                {
+                    for(unsigned long long int k = 1; k < this->taille[2]; k++)
+                    {
+                        (*potentiel2)[i][j][k] = (*potentiel1)[i][j][k];
+                        if(!fixe[i][j][k])
+                        {
+                            correction = epsilon*(-6.0*(*potentiel1)[i][j][k]+(*potentiel1)[i+1][j][k]+(*potentiel1)[i][j+1][k]+(*potentiel1)[i][j][k+1]+(*potentiel1)[i-1][j][k]+(*potentiel1)[i][j-1][k]+(*potentiel1)[i][j][k-1]);
+                            (*potentiel2)[i][j][k] += correction;
+                            if(norme(correction) > erreur)
+                            {
+                                fin = false;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        std::swap(potentiel1, potentiel2);
+
+    }while(!fin);
+
+    #pragma omp parallel
+    {
         for(unsigned long long int i = 1; i < this->taille[0]; i++)
         {
             for(unsigned long long int j = 1; j < this->taille[1]; j++)
             {
                 for(unsigned long long int k = 1; k < this->taille[2]; k++)
                 {
-                    (*potentiel2)[i][j][k] = (*potentiel1)[i][j][k];
-                    if(!fixe[i][j][k])
-                    {
-                        correction = epsilon*(-6.0*(*potentiel1)[i][j][k]+(*potentiel1)[i+1][j][k]+(*potentiel1)[i][j+1][k]+(*potentiel1)[i][j][k+1]+(*potentiel1)[i-1][j][k]+(*potentiel1)[i][j-1][k]+(*potentiel1)[i][j][k-1]);
-                        (*potentiel2)[i][j][k] += correction;
-                        if(norme(correction) > erreur)
-                        {
-                            fin = false;
-                            //ecart_maximal = std::max(norme(correction), ecart_maximal);
-                        }
-                    }
+                    vent[i-1][j-1][k-1] = (1.0/(2.0*lambda))*vecteur3((*potentiel1)[i][j+1][k][2]-(*potentiel1)[i][j-1][k][2]-(*potentiel1)[i][j][k+1][1]+(*potentiel1)[i][j][k-1][1], -(*potentiel1)[i+1][j][k][2]+(*potentiel1)[i-1][j][k][2], (*potentiel1)[i+1][j][k][1]-(*potentiel1)[i-1][j][k][1]);
                 }
             }
         }
-        //std::cerr << std::setprecision(16) <<ecart_maximal<<std::endl;
-        std::swap(potentiel1, potentiel2);
-    }while(!fin);
-    for(unsigned long long int i = 1; i < this->taille[0]; i++)
-    {
-        for(unsigned long long int j = 1; j < this->taille[1]; j++)
-        {
-            for(unsigned long long int k = 1; k < this->taille[2]; k++)
-            {
-                vent[i-1][j-1][k-1] = (1.0/(2.0*lambda))*vecteur3((*potentiel1)[i][j+1][k][2]-(*potentiel1)[i][j-1][k][2]-(*potentiel1)[i][j][k+1][1]+(*potentiel1)[i][j][k-1][1], -(*potentiel1)[i+1][j][k][2]+(*potentiel1)[i-1][j][k][2], (*potentiel1)[i+1][j][k][1]-(*potentiel1)[i-1][j][k][1]);
-            }
-        }
+        #pragma omp barrier
     }
+
     end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> temps=end-start;
-    std::cout << "Fin calul vent sequentiel" << std::endl;
-    std::cout << "Temps calul vent sequentiel : " << std::setprecision(16) << temps.count() << std::endl;
+    std::cout << "Fin calul vent parallèle avec OpenMP" << std::endl;
+    std::cout << "Temps calul vent parallèle avec OpenMP : " << std::setprecision(16) << temps.count() << std::endl;
 }

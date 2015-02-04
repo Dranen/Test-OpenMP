@@ -1,6 +1,7 @@
 #include <iostream>
 #include "vecteur3.h"
 #include "calcul_vent_seq.h"
+#include "calcul_vent_openmp.h"
 
 using namespace std;
 
@@ -18,8 +19,54 @@ bool boule(vecteur3 crd)
 int main()
 {
     double taille[3]={20,20,20};
-    Calcul_vent_seq a(50, 0.1, 0.1, 0.1, taille, boule);
+    /*Calcul_vent_OpenMP a(50, 0.1, 0.1, 1, taille, boule);
     a.calcul_vent();
+    Calcul_vent_seq b(50, 0.1, 0.1, 1, taille, boule);
+    b.calcul_vent();*/
+
+    Calcul_vent_OpenMP *a;
+    Calcul_vent_seq *b;
+
+    cout<<"Taille 2"<<endl<<endl;
+    a = new Calcul_vent_OpenMP(50, 0.1, 0.1, 2, taille, boule);
+    b = new Calcul_vent_seq(50, 0.1, 0.1, 2, taille, boule);
+    a->calcul_vent();
+    b->calcul_vent();
+    delete a;
+    delete b;
+
+    cout<<endl<<endl<<"Taille 1.5"<<endl<<endl;
+    a = new Calcul_vent_OpenMP(50, 0.1, 0.1, 1.5, taille, boule);
+    b = new Calcul_vent_seq(50, 0.1, 0.1, 1.5, taille, boule);
+    a->calcul_vent();
+    b->calcul_vent();
+    delete a;
+    delete b;
+
+    cout<<endl<<endl<<"Taille 1"<<endl<<endl;
+    a = new Calcul_vent_OpenMP(50, 0.1, 0.1, 1, taille, boule);
+    b = new Calcul_vent_seq(50, 0.1, 0.1, 1, taille, boule);
+    a->calcul_vent();
+    b->calcul_vent();
+    delete a;
+    delete b;
+
+    cout<<endl<<endl<<"Taille 0.5"<<endl<<endl;
+    a = new Calcul_vent_OpenMP(50, 0.1, 0.1, 0.5, taille, boule);
+    b = new Calcul_vent_seq(50, 0.1, 0.1, 0.5, taille, boule);
+    a->calcul_vent();
+    b->calcul_vent();
+    delete a;
+    delete b;
+
+    cout<<endl<<endl<<"Taille 0.1"<<endl<<endl;
+    a = new Calcul_vent_OpenMP(50, 0.1, 0.1, 0.1, taille, boule);
+    b = new Calcul_vent_seq(50, 0.1, 0.1, 0.1, taille, boule);
+    a->calcul_vent();
+    b->calcul_vent();
+    delete a;
+    delete b;
+
     return 0;
 }
 
