@@ -28,43 +28,48 @@ int main()
     Calcul_vent_seq *b;
 
     cout<<"Taille 2"<<endl<<endl;
+    cerr<<"Taille 2"<<endl<<endl;
     a = new Calcul_vent_OpenMP(50, 0.1, 0.1, 2, taille, boule);
-    b = new Calcul_vent_seq(50, 0.1, 0.1, 2, taille, boule);
     a->calcul_vent();
-    b->calcul_vent();
     delete a;
+    b = new Calcul_vent_seq(50, 0.1, 0.1, 2, taille, boule);
+    b->calcul_vent();
     delete b;
 
     cout<<endl<<endl<<"Taille 1.5"<<endl<<endl;
+    cerr<<endl<<endl<<"Taille 1.5"<<endl<<endl;
     a = new Calcul_vent_OpenMP(50, 0.1, 0.1, 1.5, taille, boule);
-    b = new Calcul_vent_seq(50, 0.1, 0.1, 1.5, taille, boule);
     a->calcul_vent();
-    b->calcul_vent();
     delete a;
+    b = new Calcul_vent_seq(50, 0.1, 0.1, 1.5, taille, boule);
+    b->calcul_vent();
     delete b;
 
     cout<<endl<<endl<<"Taille 1"<<endl<<endl;
+    cerr<<endl<<endl<<"Taille 1"<<endl<<endl;
     a = new Calcul_vent_OpenMP(50, 0.1, 0.1, 1, taille, boule);
-    b = new Calcul_vent_seq(50, 0.1, 0.1, 1, taille, boule);
     a->calcul_vent();
-    b->calcul_vent();
     delete a;
+    b = new Calcul_vent_seq(50, 0.1, 0.1, 1, taille, boule);
+    b->calcul_vent();
     delete b;
 
     cout<<endl<<endl<<"Taille 0.5"<<endl<<endl;
+    cerr<<endl<<endl<<"Taille 0.5"<<endl<<endl;
     a = new Calcul_vent_OpenMP(50, 0.1, 0.1, 0.5, taille, boule);
-    b = new Calcul_vent_seq(50, 0.1, 0.1, 0.5, taille, boule);
     a->calcul_vent();
-    b->calcul_vent();
     delete a;
+    b = new Calcul_vent_seq(50, 0.1, 0.1, 0.5, taille, boule);
+    b->calcul_vent();
     delete b;
 
     cout<<endl<<endl<<"Taille 0.1"<<endl<<endl;
+    cerr<<endl<<endl<<"Taille 0.1"<<endl<<endl;
     a = new Calcul_vent_OpenMP(50, 0.1, 0.1, 0.1, taille, boule);
-    b = new Calcul_vent_seq(50, 0.1, 0.1, 0.1, taille, boule);
     a->calcul_vent();
-    b->calcul_vent();
     delete a;
+    b = new Calcul_vent_seq(50, 0.1, 0.1, 0.1, taille, boule);
+    b->calcul_vent();
     delete b;
 
     return 0;

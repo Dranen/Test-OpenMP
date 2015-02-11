@@ -112,8 +112,7 @@ void Calcul_vent_OpenMP::calcul_vent()
     {
         fin = true;
 
-        #pragma omp parallel private(correction)
-        {
+            #pragma omp parallel for private(correction)
             for(unsigned long long int i = 1; i < this->taille[0]; i++)
             {
                 for(unsigned long long int j = 1; j < this->taille[1]; j++)
@@ -133,14 +132,12 @@ void Calcul_vent_OpenMP::calcul_vent()
                     }
                 }
             }
-        }
 
         std::swap(potentiel1, potentiel2);
 
     }while(!fin);
 
-    #pragma omp parallel
-    {
+        #pragma omp parallel for
         for(unsigned long long int i = 1; i < this->taille[0]; i++)
         {
             for(unsigned long long int j = 1; j < this->taille[1]; j++)
@@ -151,8 +148,6 @@ void Calcul_vent_OpenMP::calcul_vent()
                 }
             }
         }
-        #pragma omp barrier
-    }
 
     end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> temps=end-start;
