@@ -3,7 +3,9 @@ CONFIG += console
 CONFIG -= app_bundle
 CONFIG -= qt
 QMAKE_CXXFLAGS += -std=c++11
-QMAKE_CXXFLAGS += -O2
+#QMAKE_CXXFLAGS += -march=ivybridge
+QMAKE_CXXFLAGS += -mavx
+QMAKE_CXXFLAGS += -fverbose-asm -g
 QMAKE_CXXFLAGS+= -fopenmp
 QMAKE_LFLAGS +=  -fopenmp
 
